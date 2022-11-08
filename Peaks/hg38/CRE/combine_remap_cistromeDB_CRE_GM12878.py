@@ -35,11 +35,11 @@ remap["ID_Factor"] = remap["GSEID"].astype(str) + "_" + remap["Factor"].astype(s
 remap = remap[remap["ID_Factor"] != "0_0"]
 remap = remap.dropna()
 
-#Renaming some datasets that are the same but have different names in ReMap2022 and cistromeDB
-remap["ID_Factor"] = np.where(remap["ID_Factor"] == "ENCSR000ERX_HCFC1", "GSE36030_HCFC1", remap["ID_Factor"])
-remap["ID_Factor"] = np.where(remap["ID_Factor"] == "ENCSR604XDL_MAFK", "GSE36030_MAFK", remap["ID_Factor"])
-remap["ID_Factor"] = np.where(remap["ID_Factor"] == "ENCSR000ERW_ZC3H11A", "GSE36030_ZC3H11A", remap["ID_Factor"])
-
+#Removing datasets that have been revoked from ENCODE
+revoked = ["ENCSR679FAB_RNF2", "ENCSR744XTG_SUZ12", "ENCSR769ZTN_GTF2F1", "ENCSR785OKZ_RB1", 
+           "ENCSR517QHU_BHLHE40", "ENCSR237YZZ_MAFF", "ENCSR904YPP_NR3C1", "ENCSR725LYT_ARID3A",
+           "ENCSR585CVE_BACH1"]
+remap = remap[~remap["ID_Factor"].isin(revoked)]
 
 # Manually annotated blacklist to remove datasets with perturbations in cistromeDB
 blacklist = [45221] #H2AZ
