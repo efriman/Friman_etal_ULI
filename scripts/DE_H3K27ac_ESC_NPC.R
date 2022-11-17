@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-setwd("/exports/igmm/eddie/wendy-lab/elias/H3K27ac_ChIP_public/processed")
+setwd("/path/")
 library(edgeR)
 library(limma)
 library(Glimma)
@@ -73,6 +73,6 @@ NPCvsESC_H3K27ac <- DE_HOMER_RNA(data = annotation,
                            design = ~0+Sample)
 
 
-write.table(file = "/exports/igmm/eddie/wendy-lab/elias/Friman2022/Peaks/mm10/H3K27ac_DE_NPC_higher_mm10.bed", x = NPCvsESC_H3K27ac[(NPCvsESC_H3K27ac$adj.P.Val < 0.05) & (NPCvsESC_H3K27ac$logFC > 0),c("Chr", "Start", "End")], row.names = F, quote = F, col.names = F, sep = "\t")
+write.table(file = "H3K27ac_DE_NPC_higher_mm10.bed", x = NPCvsESC_H3K27ac[(NPCvsESC_H3K27ac$adj.P.Val < 0.05) & (NPCvsESC_H3K27ac$logFC > 0),c("Chr", "Start", "End")], row.names = F, quote = F, col.names = F, sep = "\t")
 
-write.table(file = "/exports/igmm/eddie/wendy-lab/elias/Friman2022/Peaks/mm10/H3K27ac_DE_ESC_higher_mm10.bed", x = NPCvsESC_H3K27ac[(NPCvsESC_H3K27ac$adj.P.Val < 0.05) & (NPCvsESC_H3K27ac$logFC < 0),c("Chr", "Start", "End")], row.names = F, quote = F, col.names = F, sep = "\t")
+write.table(file = "H3K27ac_DE_ESC_higher_mm10.bed", x = NPCvsESC_H3K27ac[(NPCvsESC_H3K27ac$adj.P.Val < 0.05) & (NPCvsESC_H3K27ac$logFC < 0),c("Chr", "Start", "End")], row.names = F, quote = F, col.names = F, sep = "\t")

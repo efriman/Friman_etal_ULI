@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-setwd("/exports/igmm/eddie/wendy-lab/elias/E14_4SU_mm10/processed_files")
+setwd("/path/")
 library(edgeR)
 library(limma)
 library(Glimma)
@@ -90,5 +90,5 @@ NPCd7vsESC[NPCd7vsESC$Strand == "+",]$TSS <- NPCd7vsESC[NPCd7vsESC$Strand == "+"
 NPCd7vsESC$TSS2 <- NPCd7vsESC$TSS+1
 
 for (i in 1:4) {
-  write.table(file = paste0("/exports/igmm/eddie/wendy-lab/elias/Friman2022/Peaks/mm10/ESC_4SU_refGene_exon1_quartile_",i,"_TSS_mm10.bed"), x = NPCd7vsESC[NPCd7vsESC$ESC_quartile == i,c("Chr", "TSS", "TSS2", "Gene.Name", "Peak.Score", "Strand")], row.names = F, quote = F, col.names = F, sep = "\t")
+  write.table(file = paste0("ESC_4SU_refGene_exon1_quartile_",i,"_TSS_mm10.bed"), x = NPCd7vsESC[NPCd7vsESC$ESC_quartile == i,c("Chr", "TSS", "TSS2", "Gene.Name", "Peak.Score", "Strand")], row.names = F, quote = F, col.names = F, sep = "\t")
 }

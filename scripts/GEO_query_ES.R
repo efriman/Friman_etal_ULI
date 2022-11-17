@@ -2,7 +2,7 @@
 
 require(GEOquery)
 
-factors = read.table(file = "/exports/igmm/eddie/wendy-lab/ilia/mouse_factor_full_QC.txt", sep = "\t", header = T, fill = TRUE)
+factors = read.table(file = "mouse_factor_full_QC.txt", sep = "\t", header = T, fill = TRUE)
 
 factors <- factors[factors$Cell_type == "Embryonic Stem Cell",]
 factors <- factors[(factors$FastQC > 25) & (factors$UniquelyMappedRatio > 0.6) & (factors$PBC > 0.8) & (factors$PeaksFoldChangeAbove10 > 500) & (factors$FRiP > 0.01) & (factors$PeaksUnionDHSRatio > 0.7),]
