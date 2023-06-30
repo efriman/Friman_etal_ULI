@@ -1,0 +1,245 @@
+####################################
+####	ULOOP			####
+####################################
+variable jbn uloop 1 # run n simulations, here n=1
+variable startfrom equal 200 #run start index
+variable runnumber equal ${jbn}+${startfrom} #real index
+print ${runnumber}
+
+#
+####################################
+####	DEFINITIONS 	    ########
+####################################
+#
+variable folder index Multicolour01 #create folder
+shell mkdir ${folder}
+#
+##create names for sims
+variable rname index Multicolour01.data
+#
+variable simname index Multicolour.${runnumber}
+#
+
+units lj # units of simulations
+atom_style angle # with stiffness
+boundary        p p p
+
+###
+# Pair interactions require lists of neighbours to be calculated
+###
+#neighbor 0.3 bin
+neighbor 1.9 bin
+neigh_modify every 1 delay 1 check yes 
+
+### Generate RESTART file, SPECIAL format, not a .txt file ###
+restart 2000000 restart.${simname} #name of restart
+#############################
+
+#processors 2 1 1
+
+### READ "start" data file ###
+read_data lammps.input
+######################
+
+### reset timestep ###
+reset_timestep 0 
+######################
+
+###
+# Define groups (atom type 1 is group 'all')
+###
+group all type 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16   
+group polymer type 11 12 13 14 15 16
+
+###
+# Dump configs + box coords
+###
+#dump   id all atom 10001 dump.chromatin
+#dump   1   all   custom   100000   DNA.dump.*  id  x y z  ix iy iz
+#dump_modify   1   format "%d %.5f %.5f %.5f %d %d %d"
+
+
+dump 1 all custom   100001   ${folder}/${simname}.lammpstrj  id type  x y z  ix iy iz
+#dump_modify   1   format line "%d %d %.5f %.5f %.5f %d %d %d"
+dump 4 all xyz 1000000 ${folder}/${simname}.xyz 
+dump_modify 4 element H C N O Na He Li Be B Ne Mg Al Si P S Cl append yes
+#dump_modify  2   format line "%d %d %d %.5f %.5f %.5f"
+
+#dump 5 all atom 100001 dump.chromatin
+#dump_modify 5 append yes
+
+
+###################################################################
+# Stiffness term
+#
+# E = K * (1+cos(theta)), K>0
+#
+angle_style   cosine
+angle_coeff   1 10.0
+###################################################################
+
+##### Sample thermodynamic info  (temperature, energy, pressure, etc.) #####
+thermo 1000
+thermo_style   custom   step  temp  epair  emol  etotal press pxx pyy pzz  vol
+############################################################################
+
+pair_style     soft 1.12246152962189
+
+pair_coeff * * 100.0 1.12246152962189
+
+bond_style   harmonic 
+
+bond_coeff   1   100.0   1.1 
+#bond_coeff   2   100.0   1.8 
+
+variable seed01 equal (${runnumber}+200) 
+variable seed02 equal (${runnumber}+244) 
+
+###
+# Set up fixes
+###
+
+fix 1 all   nve   ###NVE ensemble
+fix 2 all   langevin   1.0 1.0   1.0   ${seed01}
+
+###Langevin integrator Tstart Tstop 1/friction rndseed
+ 
+###
+# set timestep of integrator
+###
+timestep 0.01 #0.012
+
+###
+# run integration for a number of steps
+###
+run 1000
+
+angle_style   cosine
+angle_coeff   1 3.0
+
+#pair_style hybrid lj/cut 1.12246152962189 soft 1.12246152962189
+pair_style lj/cut 1.12246152962189 
+
+pair_coeff * * 1.0 1.0 1.12246152962189
+
+bond_style   fene
+
+special_bonds fene #<=== I M P O R T A N T (new command)
+
+bond_coeff   1   30.0   1.6   1.0   1.0
+
+run 1000000
+
+# now start recolouring
+
+angle_style   cosine
+angle_coeff   1 3.0
+
+#bond_style   harmonic 
+
+#bond_coeff   1   100.0   1.1 
+
+###
+
+pair_style lj/cut 1.12246152962189 
+
+pair_coeff * * 1.0 1.0 1.12246152962189
+pair_coeff 1 11 3.0 1.0 1.8
+pair_coeff 2 11 3.0 1.0 1.8
+pair_coeff 3 11 3.0 1.0 1.8
+pair_coeff 4 11 3.0 1.0 1.8
+pair_coeff 5 11 3.0 1.0 1.8
+pair_coeff 1 12 8.0 1.0 1.8
+pair_coeff 2 13 8.0 1.0 1.8
+pair_coeff 3 14 8.0 1.0 1.8
+pair_coeff 4 15 8.0 1.0 1.8
+pair_coeff 5 16 8.0 1.0 1.8
+
+###
+# Set up fixes
+###
+
+
+fix 1 all   nve   
+fix 2 all   langevin   1.0 1.0   1.0 ${seed02}
+
+timestep 0.01 #0.012
+
+variable colourstep loop 1000
+label loopomnigene
+
+run 10000
+ 
+group prot1ON type 1
+group prot2ON type 2
+group prot3ON type 3
+group prot4ON type 4
+group prot5ON type 5
+group prot1OFF type 6
+group prot2OFF type 7
+group prot3OFF type 8
+group prot4OFF type 9
+group prot5OFF type 10
+
+variable seed1 equal (${colourstep}+${runnumber}+25)*(125+${runnumber})
+variable seed2 equal (${colourstep}+${runnumber}+13)*(797+${runnumber})
+variable seed3 equal (${colourstep}+${runnumber}+8)*(677+${runnumber})
+variable seed4 equal (${colourstep}+${runnumber}+23)*(352+${runnumber})
+variable seed5 equal (${colourstep}+${runnumber}+1)*(441+${runnumber})
+variable seed6 equal (${colourstep}+${runnumber}+31)*(209+${runnumber})
+variable seed7 equal (${colourstep}+${runnumber}+37)*(503+${runnumber})
+variable seed8 equal (${colourstep}+${runnumber}+47)*(41+${runnumber})
+variable seed9 equal (${colourstep}+${runnumber}+5)*(871+${runnumber})
+variable seed10 equal (${colourstep}+${runnumber}+53)*(189+${runnumber})
+
+#Set fraction so that rate = minute^{-1} = 0.01667 s^{-1}
+#in 1 minute all 5000 proteins are recycled (on average)
+ 
+set group prot1ON type/fraction 6 0.001 ${seed1}
+set group prot2ON type/fraction 7 0.001 ${seed2}
+set group prot3ON type/fraction 8 0.001 ${seed3}
+set group prot4ON type/fraction 9 0.001 ${seed4}
+set group prot5ON type/fraction 10 0.001 ${seed5}
+set group prot1OFF type/fraction 1 0.001 ${seed6}
+set group prot2OFF type/fraction 2 0.001 ${seed7}
+set group prot3OFF type/fraction 3 0.001 ${seed8}
+set group prot4OFF type/fraction 4 0.001 ${seed9}
+set group prot5OFF type/fraction 5 0.001 ${seed10}
+
+group prot1ON delete
+group prot2ON delete
+group prot3ON delete
+group prot4ON delete
+group prot5ON delete
+group prot1OFF delete
+group prot2OFF delete
+group prot3OFF delete
+group prot4OFF delete
+group prot5OFF delete
+
+next colourstep
+
+jump chromatin.multicolour.lam loopomnigene
+
+################
+## ULOOP    ####
+################
+clear
+variable rname delete
+variable simname delete
+variable folder delete
+variable seed01 delete
+variable seed02 delete
+variable seed1 delete
+variable seed2 delete
+variable seed3 delete
+variable seed4 delete
+variable seed5 delete
+variable seed6 delete
+variable seed7 delete
+variable seed8 delete 
+variable seed9 delete
+variable seed10 delete
+
+next jbn
+jump SELF #last line
