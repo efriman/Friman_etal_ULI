@@ -4,7 +4,7 @@ Source code for custom analysis performed for Friman et al. 2023 (Genome Researc
 "Ultra-long-range interactions between active regulatory elements"
 
 
-https://genome.cshlp.org/content/early/2023/09/15/gr.277567.122
+https://genome.cshlp.org/content/33/8/1269.full
 
 
 
